@@ -18,26 +18,40 @@ public class Pawn extends Piece {
     }
 
     public boolean canMove(int targetCol, int targetRow, Piece piece) {
-
         if (isWithinBoard(targetCol, targetRow)) {
-            // if the pawn is not moved yet it can move 1 or 2 squares
-            if (!moved) {
+            Piece targetPiece = isOccupied(targetCol, targetRow);
+            int colDiff = Math.abs(targetCol - preCol);
+            int rowDiff = targetRow - preRow;
 
-                if (piece.color == GamePanel.WHITE) {
-                    return (targetCol == preCol && targetRow == preRow - 2) || targetCol == preCol && targetRow == preRow - 1;
-                } else {
-                    return (targetCol == preCol && targetRow == preRow + 2) || targetCol == preCol && targetRow == preRow + 1;
+            if (piece.color == GamePanel.WHITE) {
+                // Forward move for white
+                if (targetCol == preCol && rowDiff == -1 && targetPiece == null) {
+                    return true;
                 }
+                // Diagonal capture for white
+                if (colDiff == 1 && rowDiff == -1 && targetPiece != null && targetPiece.color == GamePanel.BLACK) {
+                    return true;
+                }
+                // First move (two squares) for white
+                return !moved && targetCol == preCol && rowDiff == -2 && targetPiece == null && isOccupied(preCol, preRow - 1) == null;
             } else {
-                // if the pawn is moved it can move only 1 square
-                if (piece.color == GamePanel.WHITE) {
-                    return targetCol == preCol && targetRow == preRow - 1;
-                } else {
-                    return targetCol == preCol && targetRow == preRow + 1;
+                // Forward move for black
+                if (targetCol == preCol && rowDiff == 1 && targetPiece == null) {
+                    return true;
+                }
+                // Diagonal capture for black
+                if (colDiff == 1 && rowDiff == 1 && targetPiece != null && targetPiece.color == GamePanel.WHITE) {
+                    return true;
+                }
+                // First move (two squares) for black
+                if (!moved && targetCol == preCol && rowDiff == 2 && targetPiece == null && isOccupied(preCol, preRow + 1) == null) {
+                    return true;
                 }
             }
-
         }
         return false;
     }
+
+
+
 }

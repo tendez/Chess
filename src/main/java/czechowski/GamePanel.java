@@ -26,6 +26,7 @@ public class GamePanel extends JPanel implements Runnable {
     Piece activePiece = null;
     boolean canMove;
     boolean validSquare;
+    public static boolean  isCastling = false;
 
     public GamePanel() {
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
@@ -59,7 +60,7 @@ public class GamePanel extends JPanel implements Runnable {
         pieces.add(new Bishop(WHITE, 5, 7));
         pieces.add(new Knight(WHITE, 1, 7));
         pieces.add(new Knight(WHITE, 6, 7));
-        pieces.add(new King(WHITE, 4, 4));
+        pieces.add(new King(WHITE, 4, 7));
         pieces.add(new Queen(WHITE, 3, 7));
         // black pieces
 
@@ -108,46 +109,85 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     private void update() {
-        // if mouse is pressed and no piece is selected, select piece
         if (mouse.pressed) {
             if (activePiece == null) {
+                // Select piece if none is active
                 for (Piece piece : simpieces) {
                     if (piece.color == currentColor &&
                             piece.col == mouse.x / Board.SQUARE_SIZE &&
                             piece.row == mouse.y / Board.SQUARE_SIZE) {
                         activePiece = piece;
+                        break;
                     }
                 }
-                // if piece is selected, simulate movement
             } else {
                 simulate();
             }
         }
-        // if mouse is released, move piece
+
         if (!mouse.pressed) {
             if (activePiece != null) {
                 if (validSquare) {
-                    // if piece is moved, but position is the same, reset position
+                    // Check if piece stayed in same position
                     if (activePiece.col == activePiece.preCol && activePiece.row == activePiece.preRow) {
                         activePiece.updatePosition();
-                    }
-                    // if piece is moved, but position is different, update position and change turn
-                    else {
+                    } else {
+                        // Handle capture logic
+                        Piece occupyingPiece = activePiece.isOccupied(activePiece.col, activePiece.row);
+
+                        // Remove opponent's piece if present
+                        if (occupyingPiece != null && occupyingPiece.color != activePiece.color) {
+                            simpieces.remove(occupyingPiece);
+                        }
+
+                        // Finalize move
+                        if(isCastling) {
+                            if (activePiece.col == 2 && activePiece.row == 7) {
+                                for (Piece piece : simpieces) {
+                                    if (piece.col == 0 && piece.row == 7) {
+                                        piece.col = 3;
+                                        piece.updatePosition();
+                                    }
+                                }
+                                isCastling = false;
+                            } else if (activePiece.col == 6 && activePiece.row == 7) {
+                                for (Piece piece : simpieces) {
+                                    if (piece.col == 7 && piece.row == 7) {
+                                        piece.col = 5;
+                                        piece.updatePosition();
+                                    }
+                                }
+                                isCastling = false;
+                            } else if (activePiece.col==2 && activePiece.row == 0) {
+                                for (Piece piece : simpieces) {
+                                    if (piece.col == 0 && piece.row == 0) {
+                                        piece.col = 3;
+                                        piece.updatePosition();
+                                    }
+                                }
+                                isCastling = false;
+                            }
+                            else if (activePiece.col==6 && activePiece.row == 0) {
+                                for (Piece piece : simpieces) {
+                                    if (piece.col == 7 && piece.row == 0) {
+                                        piece.col = 6;
+                                        piece.updatePosition();
+                                    }
+                                }
+                                isCastling = false;
+                            }
+                        }
                         activePiece.updatePosition();
                         activePiece = null;
-                        if (currentColor == WHITE) {
-                            currentColor = BLACK;
-                        } else {
-                            currentColor = WHITE;
-                        }
-                    }
 
-                    // if piece is moved to invalid square, reset position
+                        // Switch turns
+                        currentColor = (currentColor == WHITE) ? BLACK : WHITE;
+                    }
                 } else {
+                    // Reset position for invalid moves
                     activePiece.resetPosition();
                     activePiece = null;
                 }
-
             }
         }
     }
@@ -156,26 +196,25 @@ public class GamePanel extends JPanel implements Runnable {
     private void simulate() {
         canMove = false;
         validSquare = false;
+
+        // Update piece position based on mouse coordinates
         activePiece.x = mouse.x - Board.SQUARE_SIZE / 2;
         activePiece.y = mouse.y - Board.SQUARE_SIZE / 2;
         activePiece.col = activePiece.getCol(activePiece.x);
         activePiece.row = activePiece.getRow(activePiece.y);
-        //checking if piece can move
+
+        // Check if move is valid
         if (activePiece.canMove(activePiece.col, activePiece.row, activePiece)) {
-            //checking if piece is in the way
+            // Check for obstacles
             if (!activePiece.isInTheWay(activePiece.col, activePiece.row)) {
-                //checking if square is occupied
                 Piece occupyingPiece = activePiece.isOccupied(activePiece.col, activePiece.row);
-                //if square is empty, can move
-                if (occupyingPiece == null) {
-                    // Square is empty, can move
+
+                // Allow move if square is empty or contains opponent's piece
+                if (occupyingPiece == null || occupyingPiece.color != activePiece.color) {
                     canMove = true;
                     validSquare = true;
-                    //if square is occupied by enemy piece, can move and remove enemy piece
-                } else if (occupyingPiece.color != activePiece.color) {
-                    simpieces.remove(occupyingPiece);
-                    canMove = true;
-                    validSquare = true;
+
+
                 }
             }
         }

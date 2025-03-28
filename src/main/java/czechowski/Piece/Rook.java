@@ -52,10 +52,10 @@ public class Rook extends Piece {
     public boolean canMove(int targetCol, int targetRow, Piece piece) {
 
         if (isWithinBoard(targetCol, targetRow)) {
-            if (isInTheWay(targetCol, targetRow)) {
+
                 return targetCol == preCol || targetRow == preRow;
 
-            }
+
         }
         return false;
     }
