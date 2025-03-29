@@ -1,6 +1,7 @@
 package czechowski;
 
 import czechowski.Piece.*;
+import org.w3c.dom.ls.LSOutput;
 
 import javax.swing.*;
 import java.awt.*;
@@ -26,7 +27,7 @@ public class GamePanel extends JPanel implements Runnable {
     Piece activePiece = null;
     boolean canMove;
     boolean validSquare;
-    public static boolean  isCastling = false;
+    public static boolean isCastling = false;
 
     public GamePanel() {
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
@@ -108,8 +109,10 @@ public class GamePanel extends JPanel implements Runnable {
 
     }
 
+
     private void update() {
         if (mouse.pressed) {
+
             if (activePiece == null) {
                 // Select piece if none is active
                 for (Piece piece : simpieces) {
@@ -141,8 +144,10 @@ public class GamePanel extends JPanel implements Runnable {
                         }
 
                         // Finalize move
-                        if(isCastling) {
+                        if (isCastling) {
                             if (activePiece.col == 2 && activePiece.row == 7) {
+                                //check for squares under attack
+
                                 for (Piece piece : simpieces) {
                                     if (piece.col == 0 && piece.row == 7) {
                                         piece.col = 3;
@@ -158,7 +163,7 @@ public class GamePanel extends JPanel implements Runnable {
                                     }
                                 }
                                 isCastling = false;
-                            } else if (activePiece.col==2 && activePiece.row == 0) {
+                            } else if (activePiece.col == 2 && activePiece.row == 0) {
                                 for (Piece piece : simpieces) {
                                     if (piece.col == 0 && piece.row == 0) {
                                         piece.col = 3;
@@ -166,8 +171,7 @@ public class GamePanel extends JPanel implements Runnable {
                                     }
                                 }
                                 isCastling = false;
-                            }
-                            else if (activePiece.col==6 && activePiece.row == 0) {
+                            } else if (activePiece.col == 6 && activePiece.row == 0) {
                                 for (Piece piece : simpieces) {
                                     if (piece.col == 7 && piece.row == 0) {
                                         piece.col = 6;

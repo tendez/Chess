@@ -16,6 +16,14 @@ public class Knight extends Piece {
 
     }
 
+    @Override
+    public boolean isInTheWay(int targetCol, int targetRow) {
+
+
+        return false;
+    }
+
+
     public boolean canMove(int targetCol, int targetRow, Piece piece) {
 
         if (isWithinBoard(targetCol, targetRow)) {

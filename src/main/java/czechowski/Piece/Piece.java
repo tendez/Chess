@@ -7,6 +7,8 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Piece {
 
@@ -79,9 +81,32 @@ public class Piece {
     }
 
     public boolean isInTheWay(int targetCol, int targetRow) {
+        List<Point> route = new ArrayList<>();
+
+        int dx = Integer.compare(targetCol, preCol);
+        int dy = Integer.compare(targetRow, preRow);
+
+        int x = preCol + dx;
+        int y = preRow + dy;
+
+        while (x != targetCol || y != targetRow) {
+            route.add(new Point(x, y));
+            x += dx;
+            y += dy;
+        }
+
+        for (Point p : route) {
+
+            for (Piece piece : GamePanel.simpieces) {
+                if (piece.col == p.x && piece.row == p.y) {
+                    return true;
+                }
+            }
+
+
+        }
         return false;
     }
-
 
 
     public boolean isWithinBoard(int targetCol, int targetRow) {

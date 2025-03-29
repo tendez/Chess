@@ -17,6 +17,13 @@ public class Pawn extends Piece {
 
     }
 
+    @Override
+    public boolean isInTheWay(int targetCol, int targetRow) {
+
+
+        return false;
+    }
+
     public boolean canMove(int targetCol, int targetRow, Piece piece) {
         if (isWithinBoard(targetCol, targetRow)) {
             Piece targetPiece = isOccupied(targetCol, targetRow);
@@ -51,7 +58,6 @@ public class Pawn extends Piece {
         }
         return false;
     }
-
 
 
 }
