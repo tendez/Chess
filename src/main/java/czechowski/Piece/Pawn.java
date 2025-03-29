@@ -35,7 +35,33 @@ public class Pawn extends Piece {
                 if (targetCol == preCol && rowDiff == -1 && targetPiece == null) {
                     return true;
                 }
-                // Diagonal capture for white
+
+                //checking if the last moved piece is a pawn
+                if (GamePanel.lastMovedPiece instanceof Pawn) {
+
+                    //checking if the last move was a two step move
+                    if (GamePanel.lastMovedPiece.twoStepped) {
+
+                        //checking if current pawn is on the right side of the last moved pawn
+                        if (this.preRow == GamePanel.lastMovedPiece.row && this.preCol == GamePanel.lastMovedPiece.col - 1) {
+                            //checking if current pawn want's to capture the last moved pawn
+                            if (targetRow == GamePanel.lastMovedPiece.row - 1 && targetCol == GamePanel.lastMovedPiece.col) {
+
+                                GamePanel.enPassant = true;
+                                return true;
+                            }
+                        }//checking if current pawn is on the left side of the last moved pawn
+                        else if (this.preRow == GamePanel.lastMovedPiece.row && this.preCol == GamePanel.lastMovedPiece.col + 1) {
+                            if (targetRow == GamePanel.lastMovedPiece.row - 1 && targetCol == GamePanel.lastMovedPiece.col) {
+
+                                GamePanel.enPassant = true;
+                                return true;
+                            }
+                        }
+                    }
+
+
+                }
                 if (colDiff == 1 && rowDiff == -1 && targetPiece != null && targetPiece.color == GamePanel.BLACK) {
                     return true;
                 }
@@ -46,6 +72,34 @@ public class Pawn extends Piece {
                 if (targetCol == preCol && rowDiff == 1 && targetPiece == null) {
                     return true;
                 }
+
+
+                if (GamePanel.lastMovedPiece instanceof Pawn) {
+
+                    //checking if the last move was a two step move
+                    if (GamePanel.lastMovedPiece.twoStepped) {
+
+                        //checking if current pawn is on the right side of the last moved pawn
+                        if (this.preRow == GamePanel.lastMovedPiece.row && this.preCol == GamePanel.lastMovedPiece.col - 1) {
+                            //checking if current pawn want's to capture the last moved pawn
+                            if (targetRow == GamePanel.lastMovedPiece.row +1 && targetCol == GamePanel.lastMovedPiece.col) {
+                                GamePanel.enPassant = true;
+                                return true;
+                            }
+                        }//checking if current pawn is on the left side of the last moved pawn
+                        else if (this.preRow == GamePanel.lastMovedPiece.row && this.preCol == GamePanel.lastMovedPiece.col + 1) {
+                            if (targetRow == GamePanel.lastMovedPiece.row +1 && targetCol == GamePanel.lastMovedPiece.col) {
+                                GamePanel.enPassant = true;
+                                return true;
+                            }
+                        }
+                    }
+
+
+                }
+
+
+
                 // Diagonal capture for black
                 if (colDiff == 1 && rowDiff == 1 && targetPiece != null && targetPiece.color == GamePanel.WHITE) {
                     return true;

@@ -19,6 +19,7 @@ public class GamePanel extends JPanel implements Runnable {
     public static ArrayList<Piece> simpieces = new ArrayList<>();
     final int FPS = 60;
     public int currentColor = WHITE;
+    public static Piece lastMovedPiece;
 
     Thread gameThread;
     Board board = new Board();
@@ -27,6 +28,7 @@ public class GamePanel extends JPanel implements Runnable {
     boolean canMove;
     boolean validSquare;
     public static boolean isCastling = false;
+    public static boolean enPassant = false;
 
     public GamePanel() {
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
@@ -143,9 +145,22 @@ public class GamePanel extends JPanel implements Runnable {
                         }
 
                         // Finalize move
+                        //check if the move is a castling move
+
+                        if(enPassant)
+                        {
+                            if(Math.abs(lastMovedPiece.row-activePiece.row)==1 && lastMovedPiece.col==activePiece.col)
+                            {
+                                simpieces.remove(lastMovedPiece);
+                                enPassant = false;
+                            }
+
+
+
+                        }
                         if (isCastling) {
                             if (activePiece.col == 2 && activePiece.row == 7) {
-                                //check for squares under attack
+
 
                                 for (Piece piece : simpieces) {
                                     if (piece.col == 0 && piece.row == 7) {
@@ -181,6 +196,7 @@ public class GamePanel extends JPanel implements Runnable {
                             }
                         }
                         activePiece.updatePosition();
+                        lastMovedPiece = activePiece;
                         activePiece = null;
 
                         // Switch turns

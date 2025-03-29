@@ -18,6 +18,7 @@ public class Piece {
     public int color;
 
     boolean moved = false;
+    boolean twoStepped = false;
 
 
     public Piece(int color, int col, int row) {
@@ -60,6 +61,8 @@ public class Piece {
     }
 
     public void updatePosition() {
+        twoStepped = this instanceof Pawn && Math.abs(row - preRow) == 2;
+
         x = getX(col);
         y = getY(row);
         preCol = getCol(x);
