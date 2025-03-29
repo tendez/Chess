@@ -9,6 +9,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Piece {
 
@@ -35,7 +36,7 @@ public class Piece {
         BufferedImage image = null;
 
         try {
-            image = ImageIO.read(getClass().getResourceAsStream(imagePath + ".png"));
+            image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream(imagePath + ".png")));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -76,7 +77,7 @@ public class Piece {
 
     public Piece isOccupied(int targetCol, int targetRow) {
         for (Piece piece : GamePanel.simpieces) {
-            if (piece.col == targetCol && piece.row == targetRow && piece != this) {
+            if ( piece != this &&piece.col == targetCol && piece.row == targetRow ) {
                 return piece;
             }
         }
@@ -84,8 +85,6 @@ public class Piece {
     }
 
     public boolean isInTheWay(int targetCol, int targetRow) {
-        List<Point> route = new ArrayList<>();
-
         int dx = Integer.compare(targetCol, preCol);
         int dy = Integer.compare(targetRow, preRow);
 
@@ -93,20 +92,13 @@ public class Piece {
         int y = preRow + dy;
 
         while (x != targetCol || y != targetRow) {
-            route.add(new Point(x, y));
-            x += dx;
-            y += dy;
-        }
-
-        for (Point p : route) {
-
             for (Piece piece : GamePanel.simpieces) {
-                if (piece.col == p.x && piece.row == p.y) {
+                if (piece.col == x && piece.row == y) {
                     return true;
                 }
             }
-
-
+            x += dx;
+            y += dy;
         }
         return false;
     }

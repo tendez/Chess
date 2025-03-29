@@ -39,7 +39,7 @@ public class Pawn extends Piece {
                 //checking if the last moved piece is a pawn
                 if (GamePanel.lastMovedPiece instanceof Pawn) {
 
-                    //checking if the last move was a two step move
+                    //checking if the last move was a two-step move
                     if (GamePanel.lastMovedPiece.twoStepped) {
 
                         //checking if current pawn is on the right side of the last moved pawn
@@ -76,7 +76,7 @@ public class Pawn extends Piece {
 
                 if (GamePanel.lastMovedPiece instanceof Pawn) {
 
-                    //checking if the last move was a two step move
+                    //checking if the last move was a two-step move
                     if (GamePanel.lastMovedPiece.twoStepped) {
 
                         //checking if current pawn is on the right side of the last moved pawn
