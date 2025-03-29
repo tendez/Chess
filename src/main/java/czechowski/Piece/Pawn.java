@@ -51,9 +51,7 @@ public class Pawn extends Piece {
                     return true;
                 }
                 // First move (two squares) for black
-                if (!moved && targetCol == preCol && rowDiff == 2 && targetPiece == null && isOccupied(preCol, preRow + 1) == null) {
-                    return true;
-                }
+                return !moved && targetCol == preCol && rowDiff == 2 && targetPiece == null && isOccupied(preCol, preRow + 1) == null;
             }
         }
         return false;

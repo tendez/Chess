@@ -2,9 +2,6 @@ package czechowski.Piece;
 
 import czechowski.GamePanel;
 
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Bishop extends Piece {
 
