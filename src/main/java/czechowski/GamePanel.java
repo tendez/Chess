@@ -144,7 +144,7 @@ public class GamePanel extends JPanel implements Runnable {
                             simpieces.remove(occupyingPiece);
                         }
 
-                        // Finalize move
+
                         //check if the move is a castling move
 
                         if(enPassant)
@@ -195,12 +195,14 @@ public class GamePanel extends JPanel implements Runnable {
                                 isCastling = false;
                             }
                         }
+                        //finalizing the move
                         activePiece.updatePosition();
                         lastMovedPiece = activePiece;
                         activePiece = null;
 
                         // Switch turns
                         currentColor = (currentColor == WHITE) ? BLACK : WHITE;
+
                     }
                 } else {
                     // Reset position for invalid moves
@@ -261,6 +263,17 @@ public class GamePanel extends JPanel implements Runnable {
 
             }
         }
+
+
+        g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        g2.setFont(new Font("SansSerif", Font.PLAIN, 20));
+        g2.setColor(Color.white);
+        if(currentColor == WHITE) {
+            g2.drawString("White's turn", 890, 50);
+        } else {
+            g2.drawString("Black's turn", 890, 50);
+        }
+
     }
 
 }
