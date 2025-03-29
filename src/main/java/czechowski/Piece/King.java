@@ -45,8 +45,7 @@ public class King extends Piece {
                                                         || (piece2.canMove(1, 7, piece2) && !piece2.isInTheWay(1, 7))
                                                         || (piece2.canMove(4, 7, piece2) && !piece2.isInTheWay(4, 7)))) {
                                             {
-                                                System.out.println(piece2.isInTheWay(3, 7));
-                                                System.out.println(piece2 + " " + piece2.x + " " + piece2.y);
+
                                                 return false;
                                             }
                                         }
@@ -65,9 +64,9 @@ public class King extends Piece {
                                 if (isOccupied(targetCol, targetRow) == null && isOccupied(preCol + 1, targetRow) == null) {
                                     for (Piece piece2 : GamePanel.simpieces) {
                                         if (piece2.color == GamePanel.BLACK &&
-                                                ((piece2.canMove(4, 7, piece2) && piece2.isInTheWay(4, 7))
-                                                        || (piece2.canMove(5, 7, piece2) && piece2.isInTheWay(5, 7))
-                                                        || (piece2.canMove(6, 7, piece2) && piece2.isInTheWay(6, 7)))) {
+                                                ((piece2.canMove(4, 7, piece2) && !piece2.isInTheWay(4, 7))
+                                                        || (piece2.canMove(5, 7, piece2) && !piece2.isInTheWay(5, 7))
+                                                        || (piece2.canMove(6, 7, piece2) && !piece2.isInTheWay(6, 7)))) {
                                             {
 
                                                 return false;
@@ -88,11 +87,11 @@ public class King extends Piece {
                             if (piece1.col == preCol + 3 && piece1.row == preRow && !piece1.moved) {
                                 if (isOccupied(targetCol, targetRow) == null && isOccupied(preCol - 1, targetRow) == null && isOccupied(preCol - 2, targetRow) == null) {
                                     for (Piece piece2 : GamePanel.simpieces) {
-                                        if (piece2.color == GamePanel.BLACK &&
-                                                ((piece2.canMove(3, 0, piece2) && piece2.isInTheWay(3, 0))
-                                                        || (piece2.canMove(2, 0, piece2) && piece2.isInTheWay(2, 0))
-                                                        || (piece2.canMove(1, 0, piece2) && piece2.isInTheWay(1, 0))
-                                                        || (piece2.canMove(4, 0, piece2) && piece2.isInTheWay(4, 0)))) {
+                                        if (piece2.color == GamePanel.WHITE &&
+                                                ((piece2.canMove(3, 0, piece2) && !piece2.isInTheWay(3, 0))
+                                                        || (piece2.canMove(2, 0, piece2) && !piece2.isInTheWay(2, 0))
+                                                        || (piece2.canMove(1, 0, piece2) && !piece2.isInTheWay(1, 0))
+                                                        || (piece2.canMove(4, 0, piece2) && !piece2.isInTheWay(4, 0)))) {
                                             {
 
                                                 return false;
@@ -111,10 +110,10 @@ public class King extends Piece {
                             if (piece1.col == preCol + 3 && piece1.row == preRow && !piece1.moved) {
                                 if (isOccupied(targetCol, targetRow) == null && isOccupied(preCol + 1, targetRow) == null) {
                                     for (Piece piece2 : GamePanel.simpieces) {
-                                        if (piece2.color == GamePanel.BLACK &&
-                                                ((piece2.canMove(6, 0, piece2) && piece2.isInTheWay(6, 0))
-                                                        || (piece2.canMove(5, 0, piece2) && piece2.isInTheWay(5, 0))
-                                                        || (piece2.canMove(4, 0, piece2) && piece2.isInTheWay(4, 0)))) {
+                                        if (piece2.color == GamePanel.WHITE &&
+                                                ((piece2.canMove(6, 0, piece2) && !piece2.isInTheWay(6, 0))
+                                                        || (piece2.canMove(5, 0, piece2) && !piece2.isInTheWay(5, 0))
+                                                        || (piece2.canMove(4, 0, piece2) && !piece2.isInTheWay(4, 0)))) {
                                             {
 
                                                 return false;

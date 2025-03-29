@@ -174,7 +174,7 @@ public class GamePanel extends JPanel implements Runnable {
                             } else if (activePiece.col == 6 && activePiece.row == 0) {
                                 for (Piece piece : simpieces) {
                                     if (piece.col == 7 && piece.row == 0) {
-                                        piece.col = 6;
+                                        piece.col = 5;
                                         piece.updatePosition();
                                     }
                                 }
