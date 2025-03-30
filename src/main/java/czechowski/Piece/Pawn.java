@@ -33,6 +33,10 @@ public class Pawn extends Piece {
             if (piece.color == GamePanel.WHITE) {
                 // Forward move for white
                 if (targetCol == preCol && rowDiff == -1 && targetPiece == null) {
+                    if (targetRow == 0) {
+                        GamePanel.promotion = true;
+                        return true;
+                    }
                     return true;
                 }
 
@@ -63,6 +67,10 @@ public class Pawn extends Piece {
 
                 }
                 if (colDiff == 1 && rowDiff == -1 && targetPiece != null && targetPiece.color == GamePanel.BLACK) {
+                    if (targetRow == 0) {
+                        GamePanel.promotion = true;
+                        return true;
+                    }
                     return true;
                 }
                 // First move (two squares) for white
@@ -70,6 +78,11 @@ public class Pawn extends Piece {
             } else {
                 // Forward move for black
                 if (targetCol == preCol && rowDiff == 1 && targetPiece == null) {
+
+                    if (targetRow == 7) {
+                        GamePanel.promotion = true;
+                        return true;
+                    }
                     return true;
                 }
 
@@ -82,13 +95,13 @@ public class Pawn extends Piece {
                         //checking if current pawn is on the right side of the last moved pawn
                         if (this.preRow == GamePanel.lastMovedPiece.row && this.preCol == GamePanel.lastMovedPiece.col - 1) {
                             //checking if current pawn want's to capture the last moved pawn
-                            if (targetRow == GamePanel.lastMovedPiece.row +1 && targetCol == GamePanel.lastMovedPiece.col) {
+                            if (targetRow == GamePanel.lastMovedPiece.row + 1 && targetCol == GamePanel.lastMovedPiece.col) {
                                 GamePanel.enPassant = true;
                                 return true;
                             }
                         }//checking if current pawn is on the left side of the last moved pawn
                         else if (this.preRow == GamePanel.lastMovedPiece.row && this.preCol == GamePanel.lastMovedPiece.col + 1) {
-                            if (targetRow == GamePanel.lastMovedPiece.row +1 && targetCol == GamePanel.lastMovedPiece.col) {
+                            if (targetRow == GamePanel.lastMovedPiece.row + 1 && targetCol == GamePanel.lastMovedPiece.col) {
                                 GamePanel.enPassant = true;
                                 return true;
                             }
@@ -99,9 +112,12 @@ public class Pawn extends Piece {
                 }
 
 
-
                 // Diagonal capture for black
                 if (colDiff == 1 && rowDiff == 1 && targetPiece != null && targetPiece.color == GamePanel.WHITE) {
+                    if (targetRow == 7) {
+                        GamePanel.promotion = true;
+                        return true;
+                    }
                     return true;
                 }
                 // First move (two squares) for black

@@ -77,7 +77,7 @@ public class Piece {
 
     public Piece isOccupied(int targetCol, int targetRow) {
         for (Piece piece : GamePanel.simpieces) {
-            if ( piece != this &&piece.col == targetCol && piece.row == targetRow ) {
+            if (piece != this && piece.col == targetCol && piece.row == targetRow) {
                 return piece;
             }
         }

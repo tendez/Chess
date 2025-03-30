@@ -17,6 +17,7 @@ public class GamePanel extends JPanel implements Runnable {
     //pieces
     public static ArrayList<Piece> pieces = new ArrayList<>();
     public static ArrayList<Piece> simpieces = new ArrayList<>();
+    public static ArrayList<Piece> promotionpieces = new ArrayList<>();
     final int FPS = 60;
     public int currentColor = WHITE;
     public static Piece lastMovedPiece;
@@ -29,6 +30,7 @@ public class GamePanel extends JPanel implements Runnable {
     boolean validSquare;
     public static boolean isCastling = false;
     public static boolean enPassant = false;
+    public static boolean promotion = false;
 
     public GamePanel() {
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
@@ -147,14 +149,11 @@ public class GamePanel extends JPanel implements Runnable {
 
                         //check if the move is a castling move
 
-                        if(enPassant)
-                        {
-                            if(Math.abs(lastMovedPiece.row-activePiece.row)==1 && lastMovedPiece.col==activePiece.col)
-                            {
+                        if (enPassant) {
+                            if (Math.abs(lastMovedPiece.row - activePiece.row) == 1 && lastMovedPiece.col == activePiece.col) {
                                 simpieces.remove(lastMovedPiece);
                                 enPassant = false;
                             }
-
 
 
                         }
@@ -198,6 +197,13 @@ public class GamePanel extends JPanel implements Runnable {
                         //finalizing the move
                         activePiece.updatePosition();
                         lastMovedPiece = activePiece;
+                        //checking if promoting
+                        if (promotion) {
+                            setPromotion(activePiece.col, activePiece.row);
+                            activePiece.updatePosition();
+
+                        }
+
                         activePiece = null;
 
                         // Switch turns
@@ -240,9 +246,46 @@ public class GamePanel extends JPanel implements Runnable {
             }
         }
     }
+    public void setPromotion(int col, int row) {
+        addPromotionPieces(currentColor);
+        repaint();
+        simpieces.remove(activePiece);
+        activePiece = null;
+        while (promotion) {
+            handleMousePressForPromotion(col, row);
+        }
+    }
+
+    private void addPromotionPieces(int color) {
+        promotionpieces.add(new Knight(color, 9, 2));
+        promotionpieces.add(new Rook(color, 9, 3));
+        promotionpieces.add(new Queen(color, 9, 4));
+        promotionpieces.add(new Bishop(color, 9, 5));
+    }
+
+    private void handleMousePressForPromotion(int col, int row) {
+        try {
+            Thread.sleep(10); //
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        if (mouse.pressed) {
+            for (Piece piece : promotionpieces) {
+                if (piece.col == mouse.x / Board.SQUARE_SIZE && piece.row == mouse.y / Board.SQUARE_SIZE) {
+                    activePiece = piece;
+                    activePiece.col = col;
+                    activePiece.row = row;
+                    simpieces.add(activePiece);
+                    promotionpieces.clear();
+                    promotion = false;
+                    break;
+                }
+            }
+        }
+    }
 
 
-    //painting components
+        //painting components
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
@@ -251,6 +294,11 @@ public class GamePanel extends JPanel implements Runnable {
         board.draw(g2);
         for (Piece piece : simpieces) {
             piece.draw(g2);
+        }
+        if (promotion) {
+            for (Piece piece : promotionpieces) {
+                piece.draw(g2);
+            }
         }
 
         if (activePiece != null) {
@@ -268,7 +316,7 @@ public class GamePanel extends JPanel implements Runnable {
         g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         g2.setFont(new Font("SansSerif", Font.PLAIN, 20));
         g2.setColor(Color.white);
-        if(currentColor == WHITE) {
+        if (currentColor == WHITE) {
             g2.drawString("White's turn", 890, 50);
         } else {
             g2.drawString("Black's turn", 890, 50);
