@@ -25,7 +25,7 @@ public class GamePanel extends JPanel implements Runnable {
     Thread gameThread;
     Board board = new Board();
     Mouse mouse = new Mouse();
-    public static  Piece activePiece = null;
+    public static Piece activePiece = null;
     boolean canMove;
     boolean validSquare;
     public static boolean isCastling = false;
@@ -197,8 +197,8 @@ public class GamePanel extends JPanel implements Runnable {
                         }
                         //finalizing the move
                         activePiece.updatePosition();
-                        if(activePiece instanceof Pawn && (activePiece.row ==7 || activePiece.row ==0)) {
-                                promotion = true;
+                        if (activePiece instanceof Pawn && (activePiece.row == 7 || activePiece.row == 0)) {
+                            promotion = true;
                         }
                         lastMovedPiece = activePiece;
                         //checking if promoting
@@ -209,18 +209,17 @@ public class GamePanel extends JPanel implements Runnable {
                         }
                         checkForCheck();
                         activePiece = null;
-                        if (isInCheck ) {
+                        if (isInCheck) {
                             currentColor = (currentColor == WHITE) ? BLACK : WHITE;
-                            if(isCheckmate()) {
-                                System.out.println("1711");
+                            if (isCheckmate()) {
+
                                 // Handle checkmate (e.g., display message, end game)
                                 System.out.println((currentColor == WHITE ? "Black" : "White") + " wins by checkmate!");
                             }
                             currentColor = (currentColor == WHITE) ? BLACK : WHITE;
 
-                            // You might want to set a game state flag here
-                        }
 
+                        }
 
 
                         // Switch turns
@@ -251,7 +250,7 @@ public class GamePanel extends JPanel implements Runnable {
                 Piece occupyingPiece = activePiece.isOccupied(activePiece.col, activePiece.row);
                 if (occupyingPiece == null || occupyingPiece.color != activePiece.color) {
                     // Add this check to prevent moving into check
-                    if (!wouldBeInCheck(activePiece, activePiece.col, activePiece.row)) {
+                    if (wouldBeInCheck(activePiece, activePiece.col, activePiece.row)) {
                         canMove = true;
                         validSquare = true;
                     }
@@ -265,19 +264,19 @@ public class GamePanel extends JPanel implements Runnable {
      * This function is used for validating moves and determining checkmate.
      *
      * @param pieceToMove The piece that is being moved
-     * @param targetCol The target column for the move
-     * @param targetRow The target row for the move
+     * @param targetCol   The target column for the move
+     * @param targetRow   The target row for the move
      * @return true if the move would leave the king in check, false otherwise
      */
     private boolean wouldBeInCheck(Piece pieceToMove, int targetCol, int targetRow) {
         // Check if the piece can move according to its movement rules
         if (!pieceToMove.canMove(targetCol, targetRow, pieceToMove)) {
-            return true; // Piece can't move there, so we treat it as "king would be in check"
+            return false; // Piece can't move there, so we treat it as "king would be in check"
         }
 
         // Check if there are any obstacles in the path of movement
         if (pieceToMove.isInTheWay(targetCol, targetRow)) {
-            return true; // Obstacle in the path, so we treat it as "king would be in check"
+            return false; // Obstacle in the path, so we treat it as "king would be in check"
         }
 
         // Store original position
@@ -290,7 +289,7 @@ public class GamePanel extends JPanel implements Runnable {
             if (piece != pieceToMove && piece.col == targetCol && piece.row == targetRow) {
                 // Check if it's a piece of the same color (can't capture own pieces)
                 if (piece.color == pieceToMove.color) {
-                    return true; // Can't capture own piece, so we treat it as "king would be in check"
+                    return false; // Can't capture own piece, so we treat it as "king would be in check"
                 }
                 capturedPiece = piece;
                 break;
@@ -319,6 +318,7 @@ public class GamePanel extends JPanel implements Runnable {
 
         for (Piece piece : simpieces) {
             if (piece.color == opponentColor) {
+                assert king != null;
                 if (piece.canMove(king.col, king.row, piece) &&
                         !piece.isInTheWay(king.col, king.row)) {
                     inCheck = true;
@@ -334,10 +334,8 @@ public class GamePanel extends JPanel implements Runnable {
             simpieces.add(capturedPiece);
         }
 
-        return inCheck;
+        return !inCheck;
     }
-
-
 
 
     public boolean isCheckmate() {
@@ -346,7 +344,6 @@ public class GamePanel extends JPanel implements Runnable {
         if (!isInCheck) {
             return false;
         }
-
 
 
         // Try every possible move for every piece of the current player
@@ -358,15 +355,12 @@ public class GamePanel extends JPanel implements Runnable {
                 // Try all possible squares
                 for (int col = 0; col < board.MAX_COL; col++) {
                     for (int row = 0; row < board.MAX_ROW; row++) {
-                        if(king.col == col && king.row == row) {
+                        assert king != null;
+                        if (king.col == col && king.row == row) {
                             continue;
                         }
-                       if(!wouldBeInCheck(piece,col,row))
-                        {
+                        if (wouldBeInCheck(piece, col, row)) {
 
-
-
-                            System.out.println(piece.col+" "+piece.row+"  "+ col+" "+row); // Skip
 
                             return false;
                         }
@@ -377,10 +371,9 @@ public class GamePanel extends JPanel implements Runnable {
         }
 
         // If we get here, no legal moves exist to get out of check
-        System.out.println("checkmate");
+
         return true;
     }
-
 
 
     public void setPromotion(int col, int row) {
@@ -421,8 +414,8 @@ public class GamePanel extends JPanel implements Runnable {
             }
         }
     }
-    private Piece getKing()
-    {
+
+    private Piece getKing() {
         for (Piece piece : simpieces) {
             if (piece instanceof King && piece.color == currentColor) {
                 return piece;
@@ -467,10 +460,6 @@ public class GamePanel extends JPanel implements Runnable {
         // No pieces can attack the king
         isInCheck = false;
     }
-
-
-
-
 
 
     //painting components
