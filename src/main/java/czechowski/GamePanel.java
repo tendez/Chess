@@ -25,12 +25,13 @@ public class GamePanel extends JPanel implements Runnable {
     Thread gameThread;
     Board board = new Board();
     Mouse mouse = new Mouse();
-    Piece activePiece = null;
+    public static  Piece activePiece = null;
     boolean canMove;
     boolean validSquare;
     public static boolean isCastling = false;
     public static boolean enPassant = false;
     public static boolean promotion = false;
+    public static boolean isInCheck = false;
 
     public GamePanel() {
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
@@ -196,6 +197,9 @@ public class GamePanel extends JPanel implements Runnable {
                         }
                         //finalizing the move
                         activePiece.updatePosition();
+                        if(activePiece instanceof Pawn && (activePiece.row ==7 || activePiece.row ==0)) {
+                                promotion = true;
+                        }
                         lastMovedPiece = activePiece;
                         //checking if promoting
                         if (promotion) {
@@ -203,8 +207,21 @@ public class GamePanel extends JPanel implements Runnable {
                             activePiece.updatePosition();
 
                         }
-
+                        checkForCheck();
                         activePiece = null;
+                        if (isInCheck ) {
+                            currentColor = (currentColor == WHITE) ? BLACK : WHITE;
+                            if(isCheckmate()) {
+                                System.out.println("1711");
+                                // Handle checkmate (e.g., display message, end game)
+                                System.out.println((currentColor == WHITE ? "Black" : "White") + " wins by checkmate!");
+                            }
+                            currentColor = (currentColor == WHITE) ? BLACK : WHITE;
+
+                            // You might want to set a game state flag here
+                        }
+
+
 
                         // Switch turns
                         currentColor = (currentColor == WHITE) ? BLACK : WHITE;
@@ -224,28 +241,148 @@ public class GamePanel extends JPanel implements Runnable {
         canMove = false;
         validSquare = false;
 
-        // Update piece position based on mouse coordinates
         activePiece.x = mouse.x - Board.SQUARE_SIZE / 2;
         activePiece.y = mouse.y - Board.SQUARE_SIZE / 2;
         activePiece.col = activePiece.getCol(activePiece.x);
         activePiece.row = activePiece.getRow(activePiece.y);
 
-        // Check if move is valid
         if (activePiece.canMove(activePiece.col, activePiece.row, activePiece)) {
-            // Check for obstacles
             if (!activePiece.isInTheWay(activePiece.col, activePiece.row)) {
                 Piece occupyingPiece = activePiece.isOccupied(activePiece.col, activePiece.row);
-
-                // Allow move if square is empty or contains opponent's piece
                 if (occupyingPiece == null || occupyingPiece.color != activePiece.color) {
-                    canMove = true;
-                    validSquare = true;
-
-
+                    // Add this check to prevent moving into check
+                    if (!wouldBeInCheck(activePiece, activePiece.col, activePiece.row)) {
+                        canMove = true;
+                        validSquare = true;
+                    }
                 }
             }
         }
     }
+
+    /**
+     * Checks if a move would leave the king in check.
+     * This function is used for validating moves and determining checkmate.
+     *
+     * @param pieceToMove The piece that is being moved
+     * @param targetCol The target column for the move
+     * @param targetRow The target row for the move
+     * @return true if the move would leave the king in check, false otherwise
+     */
+    private boolean wouldBeInCheck(Piece pieceToMove, int targetCol, int targetRow) {
+        // Check if the piece can move according to its movement rules
+        if (!pieceToMove.canMove(targetCol, targetRow, pieceToMove)) {
+            return true; // Piece can't move there, so we treat it as "king would be in check"
+        }
+
+        // Check if there are any obstacles in the path of movement
+        if (pieceToMove.isInTheWay(targetCol, targetRow)) {
+            return true; // Obstacle in the path, so we treat it as "king would be in check"
+        }
+
+        // Store original position
+        int originalCol = pieceToMove.col;
+        int originalRow = pieceToMove.row;
+
+        // Check for and store any captured piece
+        Piece capturedPiece = null;
+        for (Piece piece : simpieces) {
+            if (piece != pieceToMove && piece.col == targetCol && piece.row == targetRow) {
+                // Check if it's a piece of the same color (can't capture own pieces)
+                if (piece.color == pieceToMove.color) {
+                    return true; // Can't capture own piece, so we treat it as "king would be in check"
+                }
+                capturedPiece = piece;
+                break;
+            }
+        }
+
+        // Temporarily make the move
+        pieceToMove.col = targetCol;
+        pieceToMove.row = targetRow;
+        if (capturedPiece != null) {
+            simpieces.remove(capturedPiece);
+        }
+
+        // Find the king of the current player
+        Piece king = null;
+        for (Piece piece : simpieces) {
+            if (piece instanceof King && piece.color == currentColor) {
+                king = piece;
+                break;
+            }
+        }
+
+        // Check if any opponent's piece can attack the king
+        boolean inCheck = false;
+        int opponentColor = (currentColor == WHITE) ? BLACK : WHITE;
+
+        for (Piece piece : simpieces) {
+            if (piece.color == opponentColor) {
+                if (piece.canMove(king.col, king.row, piece) &&
+                        !piece.isInTheWay(king.col, king.row)) {
+                    inCheck = true;
+                    break;
+                }
+            }
+        }
+
+        // Restore the original board state
+        pieceToMove.col = originalCol;
+        pieceToMove.row = originalRow;
+        if (capturedPiece != null) {
+            simpieces.add(capturedPiece);
+        }
+
+        return inCheck;
+    }
+
+
+
+
+    public boolean isCheckmate() {
+        // First verify the king is in check
+        Piece king = getKing();
+        if (!isInCheck) {
+            return false;
+        }
+
+
+
+        // Try every possible move for every piece of the current player
+        for (Piece piece : new ArrayList<>(simpieces)) {
+            if (piece.color == currentColor) {
+                // Store original position
+
+
+                // Try all possible squares
+                for (int col = 0; col < board.MAX_COL; col++) {
+                    for (int row = 0; row < board.MAX_ROW; row++) {
+                        if(king.col == col && king.row == row) {
+                            continue;
+                        }
+                       if(!wouldBeInCheck(piece,col,row))
+                        {
+
+
+
+                            System.out.println(piece.col+" "+piece.row+"  "+ col+" "+row); // Skip
+
+                            return false;
+                        }
+
+                    }
+                }
+            }
+        }
+
+        // If we get here, no legal moves exist to get out of check
+        System.out.println("checkmate");
+        return true;
+    }
+
+
+
     public void setPromotion(int col, int row) {
         addPromotionPieces(currentColor);
         repaint();
@@ -268,6 +405,7 @@ public class GamePanel extends JPanel implements Runnable {
             Thread.sleep(10); //
         } catch (InterruptedException e) {
             e.printStackTrace();
+
         }
         if (mouse.pressed) {
             for (Piece piece : promotionpieces) {
@@ -283,9 +421,59 @@ public class GamePanel extends JPanel implements Runnable {
             }
         }
     }
+    private Piece getKing()
+    {
+        for (Piece piece : simpieces) {
+            if (piece instanceof King && piece.color == currentColor) {
+                return piece;
+            }
+        }
+        return null;
+    }
+
+    public void checkForCheck() {
+        // Check if the OPPONENT's king is in check after current player's move
+        // (before switching turns)
+        int opponentColor = (currentColor == WHITE) ? BLACK : WHITE;
+
+        int kingOpponentCol = -1;
+        int kingOpponentRow = -1;
+
+        // Find the opponent's king
+        for (Piece piece : simpieces) {
+            if (piece instanceof King && piece.color == opponentColor) {
+                kingOpponentCol = piece.col;
+                kingOpponentRow = piece.row;
+                break;
+            }
+        }
+
+        if (kingOpponentCol == -1 || kingOpponentRow == -1) {
+            return; // King not found
+        }
+
+        // Check if any of current player's pieces can attack opponent's king
+        for (Piece piece : simpieces) {
+            if (piece.color == currentColor) {
+                if (piece.canMove(kingOpponentCol, kingOpponentRow, piece) &&
+                        !piece.isInTheWay(kingOpponentCol, kingOpponentRow)) {
+                    isInCheck = true;
+
+                    return;
+                }
+            }
+        }
+
+        // No pieces can attack the king
+        isInCheck = false;
+    }
 
 
-        //painting components
+
+
+
+
+    //painting components
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
