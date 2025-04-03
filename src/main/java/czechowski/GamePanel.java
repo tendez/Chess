@@ -32,6 +32,8 @@ public class GamePanel extends JPanel implements Runnable {
     public static boolean enPassant = false;
     public static boolean promotion = false;
     public static boolean isInCheck = false;
+    public static boolean gameOver = false;
+    public static boolean stalemate = false;
 
     public GamePanel() {
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
@@ -214,7 +216,7 @@ public class GamePanel extends JPanel implements Runnable {
                             if (isCheckmate()) {
 
                                 // Handle checkmate (e.g., display message, end game)
-                                System.out.println((currentColor == WHITE ? "Black" : "White") + " wins by checkmate!");
+                                gameOver= true;
                             }
                             currentColor = (currentColor == WHITE) ? BLACK : WHITE;
 
@@ -227,7 +229,7 @@ public class GamePanel extends JPanel implements Runnable {
                         currentColor = (currentColor == WHITE) ? BLACK : WHITE;
                         if(stalemate())
                         {
-                            System.out.println((currentColor == WHITE ? "Black" : "White") + " stalemate!");
+                            stalemate = true;
                         }
 
                     }
@@ -534,6 +536,29 @@ public class GamePanel extends JPanel implements Runnable {
             g2.drawString("Black's turn", 890, 50);
         }
 
+        if(gameOver)
+        {
+            String s = "";
+            if(currentColor == WHITE)
+            {
+                s = "Black wins!";
+            }
+            else
+            {
+                s = "White wins!";
+            }
+            g2.setFont(new Font("SansSerif", Font.PLAIN, 90));
+            g2.setColor(Color.GREEN);
+            g2.drawString(s, 200, 420);
+        }
+        if(stalemate)
+        {
+            g2.setFont(new Font("SansSerif", Font.PLAIN, 90));
+            g2.setColor(Color.GREEN);
+            g2.drawString("Stalemate!", 200, 420);
+        }
+
     }
+
 
 }
