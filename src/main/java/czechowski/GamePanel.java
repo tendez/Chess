@@ -50,7 +50,10 @@ public class GamePanel extends JPanel implements Runnable {
         gameThread.start();
     }
 
-    //setting pieces
+    /**
+     * Initializes and places all chess pieces in their starting positions on the board.
+     * Creates both white and black pieces including pawns, rooks, knights, bishops, queens, and kings.
+     */
     public void setPieces() {
         //white pieces
         pieces.add(new Pawn(WHITE, 0, 6));
@@ -72,23 +75,29 @@ public class GamePanel extends JPanel implements Runnable {
         // black pieces
 
         pieces.add(new Pawn(BLACK, 0, 1));
-       // pieces.add(new Pawn(BLACK, 1, 1));
-      //  pieces.add(new Pawn(BLACK, 2, 1));
-      //  pieces.add(new Pawn(BLACK, 3, 1));
-      //  pieces.add(new Pawn(BLACK, 4, 1));
-      //  pieces.add(new Pawn(BLACK, 5, 1));
-     //   pieces.add(new Pawn(BLACK, 6, 1));
-     //   pieces.add(new Pawn(BLACK, 7, 1));
-    //    pieces.add(new Rook(BLACK, 0, 0));
-    //    pieces.add(new Rook(BLACK, 7, 0));
-     //   pieces.add(new Bishop(BLACK, 2, 0));
-    //    pieces.add(new Bishop(BLACK, 5, 0));
-     //   pieces.add(new Knight(BLACK, 1, 0));
-     //   pieces.add(new Knight(BLACK, 6, 0));
+        pieces.add(new Pawn(BLACK, 1, 1));
+        pieces.add(new Pawn(BLACK, 2, 1));
+        pieces.add(new Pawn(BLACK, 3, 1));
+        pieces.add(new Pawn(BLACK, 4, 1));
+        pieces.add(new Pawn(BLACK, 5, 1));
+        pieces.add(new Pawn(BLACK, 6, 1));
+        pieces.add(new Pawn(BLACK, 7, 1));
+        pieces.add(new Rook(BLACK, 0, 0));
+        pieces.add(new Rook(BLACK, 7, 0));
+        pieces.add(new Bishop(BLACK, 2, 0));
+        pieces.add(new Bishop(BLACK, 5, 0));
+        pieces.add(new Knight(BLACK, 1, 0));
+        pieces.add(new Knight(BLACK, 6, 0));
         pieces.add(new King(BLACK, 4, 0));
-     //   pieces.add(new Queen(BLACK, 3, 0));
+        pieces.add(new Queen(BLACK, 3, 0));
     }
-
+    /**
+     * Creates a copy of pieces from the source collection to the target collection.
+     * Used for simulation and move validation purposes.
+     *
+     * @param source The collection of pieces to copy from
+     * @param target The collection to copy pieces to
+     */
     private void copyPieces(ArrayList<Piece> source, ArrayList<Piece> target) {
         target.clear();
         target.addAll(source);
@@ -115,7 +124,11 @@ public class GamePanel extends JPanel implements Runnable {
 
     }
 
-
+    /**
+     * Updates the game state based on mouse input and piece movement.
+     * Handles piece selection, movement validation, captures, special moves (castling, en passant, promotion),
+     * and checks for check, checkmate, and stalemate conditions.
+     */
     private void update() {
         if (mouse.pressed) {
 
@@ -216,7 +229,7 @@ public class GamePanel extends JPanel implements Runnable {
                             if (isCheckmate()) {
 
                                 // Handle checkmate (e.g., display message, end game)
-                                gameOver= true;
+                                gameOver = true;
                             }
                             currentColor = (currentColor == WHITE) ? BLACK : WHITE;
 
@@ -224,11 +237,9 @@ public class GamePanel extends JPanel implements Runnable {
                         }
 
 
-
                         // Switch turns
                         currentColor = (currentColor == WHITE) ? BLACK : WHITE;
-                        if(stalemate())
-                        {
+                        if (stalemate()) {
                             stalemate = true;
                         }
 
@@ -242,7 +253,11 @@ public class GamePanel extends JPanel implements Runnable {
         }
     }
 
-    //simulate movement
+    /**
+     * Simulates piece movement based on mouse position.
+     * Validates if the move is legal according to chess rules and updates the piece's visual position.
+     * Checks if the destination square is valid and if the move would leave the king in check.
+     */
     private void simulate() {
         canMove = false;
         validSquare = false;
@@ -344,7 +359,13 @@ public class GamePanel extends JPanel implements Runnable {
         return !inCheck;
     }
 
-
+    /**
+     * Determines if the current player is in checkmate.
+     * Checks if the king is in check and if there are any legal moves that can get the king out of check.
+     * If no legal moves exist to escape check, the player is in checkmate.
+     *
+     * @return true if the current player is in checkmate, false otherwise
+     */
     public boolean isCheckmate() {
         // First verify the king is in check
         Piece king = getKing();
@@ -381,7 +402,13 @@ public class GamePanel extends JPanel implements Runnable {
 
         return true;
     }
-
+    /**
+     * Determines if the current game state is a stalemate.
+     * A stalemate occurs when the current player is not in check but has no legal moves.
+     * Checks all possible moves for all pieces of the current player.
+     *
+     * @return true if the game is in stalemate, false otherwise
+     */
     public boolean stalemate() {
         // First, check if the current player's king is in check
         if (isInCheck) {
@@ -409,10 +436,13 @@ public class GamePanel extends JPanel implements Runnable {
         return true;
     }
 
-
-
-
-
+    /**
+     * Handles the pawn promotion process when a pawn reaches the opposite end of the board.
+     * Displays promotion piece options and waits for player selection.
+     *
+     * @param col The column position of the pawn to be promoted
+     * @param row The row position of the pawn to be promoted
+     */
     public void setPromotion(int col, int row) {
         addPromotionPieces(currentColor);
         repaint();
@@ -422,14 +452,25 @@ public class GamePanel extends JPanel implements Runnable {
             handleMousePressForPromotion(col, row);
         }
     }
-
+    /**
+     * Adds the promotion piece options (Knight, Rook, Queen, Bishop) to the promotion pieces list.
+     * These pieces are displayed for selection when a pawn is being promoted.
+     *
+     * @param color The color of the promotion pieces (WHITE or BLACK)
+     */
     private void addPromotionPieces(int color) {
         promotionpieces.add(new Knight(color, 9, 2));
         promotionpieces.add(new Rook(color, 9, 3));
         promotionpieces.add(new Queen(color, 9, 4));
         promotionpieces.add(new Bishop(color, 9, 5));
     }
-
+    /**
+     * Handles mouse input during the pawn promotion process.
+     * Waits for the player to select a promotion piece and replaces the pawn with the selected piece.
+     *
+     * @param col The column position where the promoted piece will be placed
+     * @param row The row position where the promoted piece will be placed
+     */
     private void handleMousePressForPromotion(int col, int row) {
         try {
             Thread.sleep(10); //
@@ -451,7 +492,11 @@ public class GamePanel extends JPanel implements Runnable {
             }
         }
     }
-
+    /**
+     * Finds and returns the king piece of the current player.
+     *
+     * @return The king piece of the current player, or null if not found
+     */
     private Piece getKing() {
         for (Piece piece : simpieces) {
             if (piece instanceof King && piece.color == currentColor) {
@@ -460,7 +505,11 @@ public class GamePanel extends JPanel implements Runnable {
         }
         return null;
     }
-
+    /**
+     * Checks if the opponent's king is in check after the current player's move.
+     * A king is in check when it can be captured by an opponent's piece on their next move.
+     * Sets the isInCheck flag accordingly.
+     */
     public void checkForCheck() {
         // Check if the OPPONENT's king is in check after current player's move
         // (before switching turns)
@@ -499,7 +548,12 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
 
-    //painting components
+    /**
+     * Renders the game board, pieces, and game state information.
+     * Handles special rendering for active pieces, promotion options, and game end messages.
+     *
+     * @param g The Graphics context to paint on
+     */
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
@@ -536,23 +590,18 @@ public class GamePanel extends JPanel implements Runnable {
             g2.drawString("Black's turn", 890, 50);
         }
 
-        if(gameOver)
-        {
-            String s = "";
-            if(currentColor == WHITE)
-            {
+        if (gameOver) {
+            String s ;
+            if (currentColor == WHITE) {
                 s = "Black wins!";
-            }
-            else
-            {
+            } else {
                 s = "White wins!";
             }
             g2.setFont(new Font("SansSerif", Font.PLAIN, 90));
             g2.setColor(Color.GREEN);
             g2.drawString(s, 200, 420);
         }
-        if(stalemate)
-        {
+        if (stalemate) {
             g2.setFont(new Font("SansSerif", Font.PLAIN, 90));
             g2.setColor(Color.GREEN);
             g2.drawString("Stalemate!", 200, 420);
