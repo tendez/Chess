@@ -70,21 +70,21 @@ public class GamePanel extends JPanel implements Runnable {
         // black pieces
 
         pieces.add(new Pawn(BLACK, 0, 1));
-        pieces.add(new Pawn(BLACK, 1, 1));
-        pieces.add(new Pawn(BLACK, 2, 1));
-        pieces.add(new Pawn(BLACK, 3, 1));
-        pieces.add(new Pawn(BLACK, 4, 1));
-        pieces.add(new Pawn(BLACK, 5, 1));
-        pieces.add(new Pawn(BLACK, 6, 1));
-        pieces.add(new Pawn(BLACK, 7, 1));
-        pieces.add(new Rook(BLACK, 0, 0));
-        pieces.add(new Rook(BLACK, 7, 0));
-        pieces.add(new Bishop(BLACK, 2, 0));
-        pieces.add(new Bishop(BLACK, 5, 0));
-        pieces.add(new Knight(BLACK, 1, 0));
-        pieces.add(new Knight(BLACK, 6, 0));
+       // pieces.add(new Pawn(BLACK, 1, 1));
+      //  pieces.add(new Pawn(BLACK, 2, 1));
+      //  pieces.add(new Pawn(BLACK, 3, 1));
+      //  pieces.add(new Pawn(BLACK, 4, 1));
+      //  pieces.add(new Pawn(BLACK, 5, 1));
+     //   pieces.add(new Pawn(BLACK, 6, 1));
+     //   pieces.add(new Pawn(BLACK, 7, 1));
+    //    pieces.add(new Rook(BLACK, 0, 0));
+    //    pieces.add(new Rook(BLACK, 7, 0));
+     //   pieces.add(new Bishop(BLACK, 2, 0));
+    //    pieces.add(new Bishop(BLACK, 5, 0));
+     //   pieces.add(new Knight(BLACK, 1, 0));
+     //   pieces.add(new Knight(BLACK, 6, 0));
         pieces.add(new King(BLACK, 4, 0));
-        pieces.add(new Queen(BLACK, 3, 0));
+     //   pieces.add(new Queen(BLACK, 3, 0));
     }
 
     private void copyPieces(ArrayList<Piece> source, ArrayList<Piece> target) {
@@ -222,8 +222,13 @@ public class GamePanel extends JPanel implements Runnable {
                         }
 
 
+
                         // Switch turns
                         currentColor = (currentColor == WHITE) ? BLACK : WHITE;
+                        if(stalemate())
+                        {
+                            System.out.println((currentColor == WHITE ? "Black" : "White") + " stalemate!");
+                        }
 
                     }
                 } else {
@@ -374,6 +379,36 @@ public class GamePanel extends JPanel implements Runnable {
 
         return true;
     }
+
+    public boolean stalemate() {
+        // First, check if the current player's king is in check
+        if (isInCheck) {
+            return false; // If the king is in check, it's not a stalemate
+        }
+
+        // Try every possible move for every piece of the current player
+        for (Piece piece : new ArrayList<>(simpieces)) {
+            if (piece.color == currentColor) {
+                // Try all possible squares
+                for (int col = 0; col < board.MAX_COL; col++) {
+                    for (int row = 0; row < board.MAX_ROW; row++) {
+                        // Check if the move is legal and doesn't put the king in check
+                        if (piece.canMove(col, row, piece) &&
+                                !piece.isInTheWay(col, row) &&
+                                wouldBeInCheck(piece, col, row)) {
+                            return false; // Found a legal move, not a stalemate
+                        }
+                    }
+                }
+            }
+        }
+
+        // If we get here, no legal moves exist for the current player and their king is not in check
+        return true;
+    }
+
+
+
 
 
     public void setPromotion(int col, int row) {
