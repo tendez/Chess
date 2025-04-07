@@ -91,6 +91,7 @@ public class GamePanel extends JPanel implements Runnable {
         pieces.add(new King(BLACK, 4, 0));
         pieces.add(new Queen(BLACK, 3, 0));
     }
+
     /**
      * Creates a copy of pieces from the source collection to the target collection.
      * Used for simulation and move validation purposes.
@@ -101,7 +102,9 @@ public class GamePanel extends JPanel implements Runnable {
     private void copyPieces(ArrayList<Piece> source, ArrayList<Piece> target) {
         target.clear();
         target.addAll(source);
+
     }
+
 
     //game loop
     @Override
@@ -402,6 +405,7 @@ public class GamePanel extends JPanel implements Runnable {
 
         return true;
     }
+
     /**
      * Determines if the current game state is a stalemate.
      * A stalemate occurs when the current player is not in check but has no legal moves.
@@ -452,6 +456,7 @@ public class GamePanel extends JPanel implements Runnable {
             handleMousePressForPromotion(col, row);
         }
     }
+
     /**
      * Adds the promotion piece options (Knight, Rook, Queen, Bishop) to the promotion pieces list.
      * These pieces are displayed for selection when a pawn is being promoted.
@@ -464,6 +469,7 @@ public class GamePanel extends JPanel implements Runnable {
         promotionpieces.add(new Queen(color, 9, 4));
         promotionpieces.add(new Bishop(color, 9, 5));
     }
+
     /**
      * Handles mouse input during the pawn promotion process.
      * Waits for the player to select a promotion piece and replaces the pawn with the selected piece.
@@ -492,6 +498,7 @@ public class GamePanel extends JPanel implements Runnable {
             }
         }
     }
+
     /**
      * Finds and returns the king piece of the current player.
      *
@@ -505,6 +512,7 @@ public class GamePanel extends JPanel implements Runnable {
         }
         return null;
     }
+
     /**
      * Checks if the opponent's king is in check after the current player's move.
      * A king is in check when it can be captured by an opponent's piece on their next move.
@@ -591,7 +599,7 @@ public class GamePanel extends JPanel implements Runnable {
         }
 
         if (gameOver) {
-            String s ;
+            String s;
             if (currentColor == WHITE) {
                 s = "Black wins!";
             } else {

@@ -7,7 +7,6 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-
 import java.util.Objects;
 
 /**
@@ -29,8 +28,8 @@ public class Piece {
      * Creates a new chess piece with the specified color and position.
      *
      * @param color The color of the piece (WHITE or BLACK)
-     * @param col The initial column position on the board
-     * @param row The initial row position on the board
+     * @param col   The initial column position on the board
+     * @param row   The initial row position on the board
      */
     public Piece(int color, int col, int row) {
         this.color = color;
@@ -120,7 +119,7 @@ public class Piece {
      *
      * @param targetCol The target column position
      * @param targetRow The target row position
-     * @param piece The piece being moved
+     * @param piece     The piece being moved
      * @return true if the move is valid according to the piece's movement rules, false otherwise
      */
     public boolean canMove(int targetCol, int targetRow, Piece piece) {
